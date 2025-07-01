@@ -75,13 +75,16 @@ async def push_news():
 
 if __name__ == "__main__":
     import sys
+    print("🟡 Running newsbot.py...")
     if len(sys.argv) > 1 and sys.argv[1] == "run-bot":
+        print("🟢 Running in polling mode")
         app = ApplicationBuilder().token(BOT_TOKEN).build()
         app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_subscribe))
-        print("🤖 Bot is polling...")
         app.run_polling()
     else:
+        print("🔵 Running push_news() via asyncio")
         asyncio.run(push_news())
+        
 '''
 if __name__ == "__main__":
     import sys
