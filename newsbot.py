@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import asyncio
 from telegram import Bot, Update
 from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 
@@ -38,16 +39,16 @@ def google_search(query: str, api_key: str, cse_id: str) -> str:
         return f"{result['title']}\n{result['link']}"
     return "No results found."
 
-def push_news():
+async def push_news():
     bot = Bot(token=BOT_TOKEN)
     subscribers = load_subscribers()
-    queries = ["행동주의", "소액주주", "경영권 분쟁", '트럼프', '미국', '주가']    #test keywords
+    queries = ["행동주의", "소액주주", "경영권 분쟁", '트럼프', '미국', '주가']
 
     for chat_id in subscribers:
         for query in queries:
             try:
                 result = google_search(query, GOOGLE_API_KEY, GOOGLE_CSE_ID)
-                bot.send_message(chat_id=chat_id, text=f"🔍 {query}\n{result}")
+                await bot.send_message(chat_id=chat_id, text=f"🔍 {query}\n{result}")
             except Exception as e:
                 print(f"Failed to send to {chat_id}: {e}")
 
@@ -59,4 +60,4 @@ if __name__ == "__main__":
         print("Bot is polling...")
         app.run_polling()
     else:
-        push_news()
+        asyncio.run(push_news())
