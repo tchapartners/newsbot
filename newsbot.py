@@ -41,7 +41,7 @@ def google_search(query: str, api_key: str, cse_id: str) -> str:
 def push_news():
     bot = Bot(token=BOT_TOKEN)
     subscribers = load_subscribers()
-    queries = ["행동주의", "소액주주", "경영권 분쟁"]
+    queries = ["행동주의", "소액주주", "경영권 분쟁", '트럼프', '미국', '주가']    #test keywords
 
     for chat_id in subscribers:
         for query in queries:
