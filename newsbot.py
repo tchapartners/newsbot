@@ -38,8 +38,9 @@ def google_search(query: str, api_key: str, cse_id: str) -> str:
         result = data["items"][0]
         return f"{result['title']}\n{result['link']}"
     return "No results found."
-
+'''
 async def push_news():
+    
     bot = Bot(token=BOT_TOKEN)
     subscribers = load_subscribers()
     queries = ["행동주의", "소액주주", "경영권 분쟁", '트럼프', '미국', '주가']
@@ -52,7 +53,36 @@ async def push_news():
                 await bot.send_message(chat_id=chat_id, text=f"🔍 {query}\n{result}")
             except Exception as e:
                 print(f"Failed to send to {chat_id}: {e}")
+'''
+# dummy send / main 
+async def push_news():
+    
+    print("Checking subscribers.json:") 
+    with open("subscribers.json") as f: 
+        print(f.read())
+    
+    bot = Bot(token=BOT_TOKEN)
+    subscribers = load_subscribers()
+    print(f"✅ push_news started")
+    print(f"Loaded subscribers: {subscribers}")
 
+    for chat_id in subscribers:
+        try:
+            print(f"Sending to {chat_id}: Hello world")
+            await bot.send_message(chat_id=chat_id, text="🌍 Hello, this is a test message from your bot!")
+        except Exception as e:
+            print(f"❌ Failed to send to {chat_id}: {e}")
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "run-bot":
+        app = ApplicationBuilder().token(BOT_TOKEN).build()
+        app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_subscribe))
+        print("🤖 Bot is polling...")
+        app.run_polling()
+    else:
+        asyncio.run(push_news())
+'''
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "run-bot":
@@ -62,3 +92,4 @@ if __name__ == "__main__":
         app.run_polling()
     else:
         asyncio.run(push_news())
+'''
