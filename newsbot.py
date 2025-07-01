@@ -48,6 +48,7 @@ async def push_news():
         for query in queries:
             try:
                 result = google_search(query, GOOGLE_API_KEY, GOOGLE_CSE_ID)
+                print(f"Sending to {chat_id}: {query}")
                 await bot.send_message(chat_id=chat_id, text=f"🔍 {query}\n{result}")
             except Exception as e:
                 print(f"Failed to send to {chat_id}: {e}")
