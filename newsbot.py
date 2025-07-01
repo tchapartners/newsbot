@@ -1,3 +1,5 @@
+print("🚨 newsbot.py: script is running")
+
 import os
 import json
 import requests
