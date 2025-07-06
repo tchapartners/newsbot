@@ -25,3 +25,16 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
         run: python newsbot.py
+        
+      - name: Save sent_articles cache
+        uses: actions/cache@v3
+        with:
+          path: sent_articles.json
+          key: sent-articles-cache-${{ github.run_id }}
+          restore-keys: sent-articles-cache
+
+      - name: Save sent_articles backup
+        uses: actions/upload-artifact@v3
+        with:
+          name: sent_articles
+          path: sent_articles.json
