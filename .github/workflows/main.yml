@@ -17,7 +17,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install python-telegram-bot==20.3 requests python-dotenv
+        run:  pip install python-telegram-bot==20.3 requests python-dotenv beautifulsoup4
 
       - name: Run bot
         env:
