@@ -19,7 +19,10 @@ jobs:
           path: sent_articles.json
           key: sent-articles-cache-${{ github.run_id }}
           restore-keys: sent-articles-cache
-
+          
+      - name: Clear sent_articles.json for testing
+        run: echo "[]" > sent_articles.json
+  
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
