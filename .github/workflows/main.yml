@@ -50,7 +50,7 @@ jobs:
           restore-keys: sent-articles-cache
 
       - name: Upload sent_articles backup
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sent_articles
           path: sent_articles.json
