@@ -38,8 +38,12 @@ jobs:
           if [ ! -f companies.json ]; then
             echo '["한국콜마", "한진칼", "현대해상", "동양고속", "삼영전자", "남양유업", "맵스리얼티", "상상인", "파크시스템스", "금호석유화학", "와이엠", "씨에스윈드", "사조오양", "마음AI", "리파인", "가비아"]' > companies.json
           fi
-
+        
       - name: Run news bot (push only)
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
         run: python3 newsbot.py
 
       - name: Save updated sent_articles cache
