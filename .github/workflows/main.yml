@@ -1,38 +1,53 @@
-name: Telegram News Bot
+name: Run News Bot
 
 on:
   schedule:
-    - cron: '0 * * * *'   # 매 시 정각 (UTC 기준)
-  workflow_dispatch:       # 수동 실행도 가능
+    - cron: '0 * * * *'  # 매시 정각 실행 (UTC 기준)
+  workflow_dispatch:
 
 jobs:
-  run-bot:
+  run-news-bot:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run:  pip install python-telegram-bot==20.3 requests python-dotenv beautifulsoup4 newspaper3k lxml[html_clean]
-
-      - name: Wipe sent_articles.json before test
-        run: echo "[]" > sent_articles.json
-  
-      - name: Run bot
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
-        run: python newsbot.py
-        
-      - name: Save sent_articles cache
+      - name: Restore sent_articles cache
         uses: actions/cache@v3
         with:
           path: sent_articles.json
           key: sent-articles-cache-${{ github.run_id }}
           restore-keys: sent-articles-cache
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt
+
+      - name: Initialize companies.json if missing
+        run: |
+          if [ ! -f companies.json ]; then
+            echo '["한국콜마", "한진칼", "현대해상", "동양고속", "삼영전자", "남양유업", "맵스리얼티", "상상인", "파크시스템스", "금호석유화학", "와이엠", "씨에스윈드", "사조오양", "마음AI", "리파인", "가비아"]' > companies.json
+          fi
+
+      - name: Run news bot (push only)
+        run: python3 newsbot.py
+
+      - name: Save updated sent_articles cache
+        uses: actions/cache@v3
+        with:
+          path: sent_articles.json
+          key: sent-articles-cache-${{ github.run_id }}
+          restore-keys: sent-articles-cache
+
+      - name: Upload sent_articles backup
+        uses: actions/upload-artifact@v3
+        with:
+          name: sent_articles
+          path: sent_articles.json
