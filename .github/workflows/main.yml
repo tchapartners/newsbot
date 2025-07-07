@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run:  pip install python-telegram-bot==20.3 requests python-dotenv beautifulsoup4 newspaper3k lxml[html_clean]
 
+      - name: Wipe sent_articles.json before test
+        run: echo "[]" > sent_articles.json
+  
       - name: Run bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
