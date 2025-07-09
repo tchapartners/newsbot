@@ -53,21 +53,20 @@ def load_topics(): return load_json(TOPIC_FILE)
 
 # --- Google Search ---
 def google_search_all(query: str, api_key: str, cse_id: str, days: int = 7) -> list:
-    url = "https://www.googleapis.com/customsearch/v1"
+    url = "https://cse.google.com/cse?cx=e5ac5f3b0406f47ef"
     params = {
         "key": api_key,
         "cx": cse_id,
         "q": query,
         "num": 10,
         "lr": "lang_ko",
-        "gl": "kr", 
+        "gl": "kr",
+        
         "dateRestrict": f"d{days}"
     }
     try:
-       res = requests.get(url, params=params)
-       print(f"[{query}] HTTP 상태: {res.status_code}")
-       print(f"[{query}] 응답 내용: {res.text[:500]}")  # 너무 길면 일부만 보기
-       return res.json().get("items", [])
+        res = requests.get(url, params=params)
+        return res.json().get("items", [])
     except Exception as e:
         print(f"[!] google_search_all error: {e}")
         return []
