@@ -35,3 +35,11 @@ jobs:
 
       - name: Run Newsbot
         run: python3 newsbot.py
+
+      - name: Commit and Push sent_articles.json
+        run: |
+          git config --global user.name "newsbot[bot]"
+          git config --global user.email "bot@tchapartners.com"
+          git add sent_articles.json
+          git commit -m "🤖 자동 저장: sent_articles 업데이트" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
