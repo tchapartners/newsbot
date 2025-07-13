@@ -1,74 +1,37 @@
-name: Run News Bot
+name: Run Newsbot Every 3 Hours (KST)
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 매시 정각 실행 (UTC 기준)
+    # 한국은 UTC+9, 즉 KST 08:00 = UTC 23:00
+    - cron: '0 23 * * *'   # KST 08:00
+    - cron: '0 2  * * *'   # KST 11:00
+    - cron: '0 5  * * *'   # KST 14:00
+    - cron: '0 8  * * *'   # KST 17:00
+    - cron: '0 11 * * *'   # KST 20:00
   workflow_dispatch:
 
 jobs:
-  run-news-bot:
+  run-newsbot:
     runs-on: ubuntu-latest
 
+    env:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+
     steps:
-      - name: Checkout repo
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Restore sent_articles cache
-        uses: actions/cache@v3
-        with:
-          path: sent_articles.json
-          key: sent-articles-cache-${{ github.run_id }}
-          restore-keys: sent-articles-cache
-          
-      - name: Clear sent_articles.json for testing
-        run: echo "[]" > sent_articles.json
-  
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python3 -m pip install --upgrade pip
           pip3 install -r requirements.txt
 
-      - name: Initialize companies.json if missing
-        run: |
-          if [ ! -f companies.json ]; then
-            echo '["한국콜마", "한진칼", "현대해상", "동양고속", "삼영전자", "남양유업", "맵스리얼티", "상상인", "파크시스템스", "금호석유화학", "와이엠", "씨에스윈드", "사조오양", "마음AI", "리파인", "가비아"]' > companies.json
-          fi
-      
-      - name: Initialize topics.json if missing
-        run: |
-          if [ ! -f topics.json ]; then
-            echo '[
-              "행동주의", "소액주주", "경영권 분쟁", "밸류업", "지배구조", "주주총회", "액티비스트", "최대주주",
-              "기업가치 제고", "주주가치 제고", "기업분할", "물적분할", "인적분할", "자사주", "배당", "배당확대",
-              "배당정책", "지분확대", "지분매입", "경영참여", "사외이사", "이사회", "경영투명성", "기업지배구조",
-              "의결권", "경영효율화", "사업재편", "지속가능경영", "이익환원", "리스크관리", "경영쇄신",
-              "감사위원 분리선출", "집중투표제", "누적투표제", "전자투표", "이사후보추천위원회", "주주제안",
-              "지분율 변화", "최대주주 변경", "오너리스크", "오너일가", "특수관계인", "상속세", "우호지분",
-              "의결권 대리행사", "이익잉여금", "배당성향", "현금배당", "현금흐름 활용", "주주환원", "백기사",
-              "적대적 인수합병", "경영권 방어", "차등의결권", "공개매수", "지분매수청구"
-            ]' > topics.json
-          fi
-      - name: Run news bot (push only)
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+      - name: Run Newsbot
         run: python3 newsbot.py
-
-      - name: Save updated sent_articles cache
-        uses: actions/cache@v3
-        with:
-          path: sent_articles.json
-          key: sent-articles-cache-${{ github.run_id }}
-          restore-keys: sent-articles-cache
-
-      - name: Upload sent_articles backup
-        uses: actions/upload-artifact@v4
-        with:
-          name: sent_articles
-          path: sent_articles.json
