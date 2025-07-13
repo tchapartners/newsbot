@@ -33,7 +33,7 @@ def load_sent(): return load_json(SENT_FILE)
 def save_sent(data): save_json(SENT_FILE, data)
 
 # Google Custom Search
-def google_search_all(query, api_key, cse_id, days=2):
+def google_search_all(query, api_key, cse_id, days=5):
     url = "https://www.googleapis.com/customsearch/v1"
     params = {
         "key": api_key, "cx": cse_id, "q": query,
