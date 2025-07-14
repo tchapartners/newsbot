@@ -82,14 +82,48 @@ ACTIVISM_KEYWORDS = [
      "주총", "소송", "감사", "이사", "선임", "경영", "배당", "의결권"
 ]
 
+# 구독자 업데이트 
+def fetch_recent_chat_ids(bot_token, limit=20):
+    url = f"https://api.telegram.org/bot{bot_token}/getUpdates"
+    try:
+        res = requests.get(url, timeout=5)
+        res.raise_for_status()  # HTTP 에러 발생 시 예외 처리
+        data = res.json()
+
+        updates = data.get("result", [])
+        chat_ids = set()
+
+        for u in updates[-limit:]:
+            message = u.get("message") or u.get("edited_message")
+            if message and "chat" in message:
+                chat_id = message["chat"]["id"]
+                chat_ids.add(chat_id)
+
+        print(f"[✓] getUpdates 통해 수집된 chat_id 수: {len(chat_ids)}")
+        return list(chat_ids)
+
+    except requests.exceptions.RequestException as e:
+        print(f"[!] HTTP 요청 실패: {e}")
+    except Exception as e:
+        print(f"[!] getUpdates 파싱 에러: {e}")
+
+    return []
+
 # 뉴스 푸시
 async def push_news():
     bot = Bot(token=BOT_TOKEN)
+    
+    # 데이터 로드
     sent_articles = load_sent()
     sent_summaries = [a["summary"] for a in sent_articles]
     topics = load_topics()
     companies = load_companies()
+    
+    # 구독자 자동 업데이트
     subscribers = load_subscribers()
+    recent_ids = fetch_recent_chat_ids(BOT_TOKEN)
+    subscribers = list(set(subscribers + recent_ids))
+    save_subscribers(subscribers)
 
     # Topic 검색
     for topic in topics:
