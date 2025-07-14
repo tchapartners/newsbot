@@ -2,12 +2,11 @@ name: Run Newsbot Every 3 Hours (KST)
 
 on:
   schedule:
-    - cron: '35 5 * * *' 
     # 한국은 UTC+9
-    # - cron: '0 23 * * *'     # KST 08:00
-    # - cron: '0 2 * * *'      # KST 11:00
-    # - cron: '0 5 * * *'      # KST 14:00
-    #- cron: '0 8 * * *'      # KST 17:00
+    - cron: '0 23 * * *'     # KST 08:00
+    - cron: '0 2 * * *'      # KST 11:00
+    - cron: '0 5 * * *'      # KST 14:00
+    - cron: '0 8 * * *'      # KST 17:00
   workflow_dispatch:
 
 jobs:
