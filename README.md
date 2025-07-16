@@ -1,5 +1,5 @@
 [변경 가능 파일]
-companies.json -> 종목명 추가/삭제
+companies.json -> 종목명 추가/삭제 \n
 topics.json -> 행동주의 관련 키워드 추가/삭제 
 newsbot.py -> ACTIVISM_KEYWORDS 리스트 내부만!! 다른 부분 변경 시 작동 안될 수 있음 
 
